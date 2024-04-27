@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000
 
@@ -37,6 +37,27 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
+
+
+
+    app.get('/crafts/:id', async (req, res) => {
+      const craftId = req.params.id;
+      try {
+        const craft = await craftCollection.findOne({ _id: new ObjectId(craftId) });
+        if (craft) {
+          res.send(craft);
+        } else {
+          res.status(404).send({ error: 'Craft not found' });
+        }
+      } catch (error) {
+        res.status(500).send({ error: 'Internal server error' });
+      }
+    });
+
+
+
+
+
 
     app.post('/crafts',async(req,res)=>{
       const newCraft = req.body;
