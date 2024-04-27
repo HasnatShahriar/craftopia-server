@@ -30,9 +30,19 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    app.post('/crafts',(req,res)=>{
+    const craftCollection = client.db('craftsDB').collection('crafts');
+
+    app.get('/crafts',async(req,res)=>{
+      const cursor = craftCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
+    app.post('/crafts',async(req,res)=>{
       const newCraft = req.body;
       console.log(newCraft);
+      const result = await craftCollection.insertOne(newCraft);
+      res.send(result);
     })
 
 
