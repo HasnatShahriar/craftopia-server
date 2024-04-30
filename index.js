@@ -29,38 +29,35 @@ async function run() {
 
     const craftCollection = client.db('craftsDB').collection('crafts');
 
-    const userCollection = client.db('craftsDB').collection('users');
 
-    app.get('/crafts',async(req,res)=>{
+    app.get('/crafts', async (req, res) => {
       const cursor = craftCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
 
-
-    app.get('/crafts/:id',async(req,res) =>{
+    app.get('/crafts/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await craftCollection.findOne(query);
       res.send(result);
     })
 
 
-
-    app.get('/myList/:email',async(req,res)=>{
+    app.get('/myList/:email', async (req, res) => {
       console.log(req.params.email);
-      const result = await craftCollection.find({email: req.params.email}).toArray();
+      const result = await craftCollection.find({ email: req.params.email }).toArray();
       res.send(result);
     })
 
 
-    app.get('/singleProduct/:id',async(req,res)=>{
-      const result = await craftCollection.findOne({_id:new ObjectId (req.params.id)})
+    app.get('/singleProduct/:id', async (req, res) => {
+      const result = await craftCollection.findOne({ _id: new ObjectId(req.params.id) })
       res.send(result)
     })
 
 
-    app.post('/crafts',async(req,res)=>{
+    app.post('/crafts', async (req, res) => {
       const newCraft = req.body;
       console.log(newCraft);
       const result = await craftCollection.insertOne(newCraft);
@@ -68,13 +65,14 @@ async function run() {
     })
 
 
-    app.put('/updateProduct/:id', async (req,res)=>{
+
+    app.put('/updateProduct/:id', async (req, res) => {
       const id = req.params.id
-      const filter = {_id: new ObjectId(id)};
-      const options = {upsert : true};
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
       const updatedProduct = req.body;
       const product = {
-        $set:{
+        $set: {
           photo: updatedProduct.photo,
           item: updatedProduct.item,
           subCategory: updatedProduct.subCategory,
@@ -84,18 +82,16 @@ async function run() {
           customization: updatedProduct.customization,
           processing: updatedProduct.processing,
           stock: updatedProduct.stock,
-          email: updatedProduct.email,
-          name: updatedProduct.name,              
         }
       }
 
-      const result = await craftCollection.updateOne(filter,product,options);
+      const result = await craftCollection.updateOne(filter, product, options);
       res.send(result);
     })
-    
 
-    app.delete('/delete/:id',async(req,res)=>{
-      const result = await craftCollection.deleteOne({_id : new ObjectId(req.params.id)})
+
+    app.delete('/delete/:id', async (req, res) => {
+      const result = await craftCollection.deleteOne({ _id: new ObjectId(req.params.id) })
       console.log(result);
       res.send(result)
     })
@@ -113,10 +109,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/',async(req,res)=>{
+app.get('/', async (req, res) => {
   res.send('Craftopia server is running')
 })
 
-app.listen(port,()=>{
+app.listen(port, () => {
   console.log(`Craftopia server is running on port: ${port} `);
 })
